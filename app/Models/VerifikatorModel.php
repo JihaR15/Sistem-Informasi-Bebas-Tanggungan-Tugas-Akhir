@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../Models/Model.php';
+
 class VerifikatorModel extends Model {
 
     private $conn;
@@ -11,7 +12,6 @@ class VerifikatorModel extends Model {
         $this->conn = $dbConnection;
     }
 
-
     public function getBelumDiverifikasiCount($jenisDokumen, $tahun) {
         $stmt = $this->conn->prepare ("
             SELECT COUNT(*) AS Terverifikasi
@@ -21,7 +21,7 @@ class VerifikatorModel extends Model {
             JOIN Dokumen d ON v.id_dokumen = d.id_dokumen
             WHERE v.status_verifikasi = 'Menunggu Diverifikasi'
             AND a.role_angkatan = :tahun
-            AND d.jenis_dokumen = :jenisDokumen  -- Filter berdasarkan jenis_dokumen
+            AND d.jenis_dokumen = :jenisDokumen  
         ");
         $stmt->bindParam(':jenisDokumen', $jenisDokumen);
         $stmt->bindParam(':tahun', $tahun);
@@ -39,7 +39,7 @@ class VerifikatorModel extends Model {
             JOIN Dokumen d ON v.id_dokumen = d.id_dokumen
             WHERE v.status_verifikasi = 'Disetujui'
             AND a.role_angkatan = :tahun
-            AND d.jenis_dokumen = :jenisDokumen  -- Filter berdasarkan jenis_dokumen
+            AND d.jenis_dokumen = :jenisDokumen  
         ");
         $stmt->bindParam(':jenisDokumen', $jenisDokumen);
         $stmt->bindParam(':tahun', $tahun);
@@ -48,11 +48,10 @@ class VerifikatorModel extends Model {
         return $result['Terverifikasi'];
     }
 
-    
     public function getMahasiswaCount($tahun) {
         $stmt = $this->conn->prepare ("
             SELECT COUNT(*) AS jumlah_mahasiswa
-            FROM [User] u
+            FROM `User` u
             JOIN Mahasiswa m ON u.id_user = m.id_user
             JOIN Angkatan a ON m.id_angkatan = a.id_angkatan
             WHERE u.role_user = 'mahasiswa'
@@ -66,92 +65,87 @@ class VerifikatorModel extends Model {
         return $result['jumlah_mahasiswa'];
     }
     
+    // --- QUERY DIREVISI: TANPA VIEW, LANGSUNG JOIN TABEL ASLI ---
     public function getMhsWithDocumentCompleteJurusan() {
         $stmt = $this->conn->prepare("
             SELECT
-            vm.nim,
-            vm.nama,
-            vm.no_telp,
-            vm.role_prodi,
-            vm.role_jurusan,
-            vm.role_angkatan,
-            vm.kelas, 
-            vm.tgl_upload,
-            COUNT(v.id_verifikasi) AS verifikasi_count,
-            SUM(CASE WHEN v.status_verifikasi = 'Disetujui' THEN 1 ELSE 0 END) AS disetujui_count
-        FROM Verif_Mhs_Jurusan vm
-        JOIN Verifikasi v ON vm.nim = v.nim
-        JOIN Dokumen d ON v.id_dokumen = d.id_dokumen
-        WHERE d.jenis_dokumen = 'Jurusan'
-        AND v.status_verifikasi IN ('Menunggu Diverifikasi', 'Tidak Disetujui', 'Disetujui')
-        GROUP BY
-            vm.nim, 
-            vm.nama, 
-            vm.no_telp, 
-            vm.role_prodi, 
-            vm.role_jurusan, 
-            vm.role_angkatan, 
-            vm.kelas, 
-            vm.tgl_upload
-        HAVING 
-            SUM(CASE WHEN v.status_verifikasi = 'Disetujui' THEN 1 ELSE 0 END) < 7  -- Tampilkan data jika Disetujui < 7
-        ORDER BY
-            vm.tgl_upload ASC;
+                m.nim,
+                u.nama,
+                u.no_telp,
+                p.role_prodi,
+                j.role_jurusan,
+                a.role_angkatan,
+                m.kelas, 
+                MAX(v.tgl_upload) as tgl_upload,
+                COUNT(v.id_verifikasi) AS verifikasi_count,
+                SUM(CASE WHEN v.status_verifikasi = 'Disetujui' THEN 1 ELSE 0 END) AS disetujui_count
+            FROM Mahasiswa m
+            JOIN `User` u ON m.id_user = u.id_user
+            JOIN Prodi p ON m.id_prodi = p.id_prodi
+            JOIN Jurusan j ON m.id_jurusan = j.id_jurusan
+            JOIN Angkatan a ON m.id_angkatan = a.id_angkatan
+            JOIN Verifikasi v ON m.nim = v.nim
+            JOIN Dokumen d ON v.id_dokumen = d.id_dokumen
+            WHERE d.jenis_dokumen = 'Jurusan'
+            AND v.status_verifikasi IN ('Menunggu Diverifikasi', 'Tidak Disetujui', 'Disetujui')
+            GROUP BY
+                m.nim, 
+                u.nama, 
+                u.no_telp, 
+                p.role_prodi, 
+                j.role_jurusan, 
+                a.role_angkatan, 
+                m.kelas
+            HAVING 
+                SUM(CASE WHEN v.status_verifikasi = 'Disetujui' THEN 1 ELSE 0 END) < 7
+            ORDER BY
+                tgl_upload ASC;
         ");
     
-
-    
-        // Execute the query
         $stmt->execute();
-    
-        // Fetch results
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        return $result; // Return all results
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // --- QUERY DIREVISI: TANPA VIEW, LANGSUNG JOIN TABEL ASLI ---
     public function getMhsWithDocumentCompletePusat() {
         $stmt = $this->conn->prepare("
             SELECT
-            vm.nim,
-            vm.nama,
-            vm.no_telp,
-            vm.role_prodi,
-            vm.role_jurusan,
-            vm.role_angkatan,
-            vm.kelas, 
-            vm.tgl_upload,
-            COUNT(v.id_verifikasi) AS verifikasi_count,
-            SUM(CASE WHEN v.status_verifikasi = 'Disetujui' THEN 1 ELSE 0 END) AS disetujui_count
-        FROM Verif_Mhs_Pusat vm
-        JOIN Verifikasi v ON vm.nim = v.nim
-        JOIN Dokumen d ON v.id_dokumen = d.id_dokumen
-        WHERE d.jenis_dokumen = 'Pusat'
-        AND v.status_verifikasi IN ('Menunggu Diverifikasi', 'Tidak Disetujui', 'Disetujui')
-        GROUP BY
-            vm.nim, 
-            vm.nama, 
-            vm.no_telp, 
-            vm.role_prodi, 
-            vm.role_jurusan, 
-            vm.role_angkatan, 
-            vm.kelas, 
-            vm.tgl_upload
-        HAVING 
-            SUM(CASE WHEN v.status_verifikasi = 'Disetujui' THEN 1 ELSE 0 END) < 6  -- Tampilkan data jika Disetujui < 7
-        ORDER BY
-            vm.tgl_upload ASC;
+                m.nim,
+                u.nama,
+                u.no_telp,
+                p.role_prodi,
+                j.role_jurusan,
+                a.role_angkatan,
+                m.kelas, 
+                MAX(v.tgl_upload) as tgl_upload,
+                COUNT(v.id_verifikasi) AS verifikasi_count,
+                SUM(CASE WHEN v.status_verifikasi = 'Disetujui' THEN 1 ELSE 0 END) AS disetujui_count
+            FROM Mahasiswa m
+            JOIN `User` u ON m.id_user = u.id_user
+            JOIN Prodi p ON m.id_prodi = p.id_prodi
+            JOIN Jurusan j ON m.id_jurusan = j.id_jurusan
+            JOIN Angkatan a ON m.id_angkatan = a.id_angkatan
+            JOIN Verifikasi v ON m.nim = v.nim
+            JOIN Dokumen d ON v.id_dokumen = d.id_dokumen
+            WHERE d.jenis_dokumen = 'Pusat'
+            AND v.status_verifikasi IN ('Menunggu Diverifikasi', 'Tidak Disetujui', 'Disetujui')
+            GROUP BY
+                m.nim, 
+                u.nama, 
+                u.no_telp, 
+                p.role_prodi, 
+                j.role_jurusan, 
+                a.role_angkatan, 
+                m.kelas
+            HAVING 
+                SUM(CASE WHEN v.status_verifikasi = 'Disetujui' THEN 1 ELSE 0 END) < 6
+            ORDER BY
+                tgl_upload ASC;
         ");
     
-        // Execute the query
         $stmt->execute();
-    
-        // Fetch results
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        return $result; // Return all results
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
 
     public function getDocument($jenisDokumen, $nim) {
         $stmt = $this->conn->prepare("
@@ -167,39 +161,28 @@ class VerifikatorModel extends Model {
         $stmt->bindParam(':jenisDokumen', $jenisDokumen);
         $stmt->bindParam(':nim', $nim);
         $stmt->execute();
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        return $result;  // Mengembalikan array asosiatif dari hasil query
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    
     public function updateStatusVerifikasiTidakDisetujui($id_dokumen, $nim, $catatan) {
-        // Query SQL untuk update status_verifikasi dan catatan
         $stmt = $this->conn->prepare("
             UPDATE Verifikasi
             SET status_verifikasi = 'Tidak Disetujui',
-                catatan = :catatan  -- Menambahkan catatan ke dalam kolom catatan
+                catatan = :catatan
             WHERE id_dokumen = :idDokumen
             AND nim = :nim
         ");
         
-        // Parameter untuk bind data
         $stmt->bindParam(':idDokumen', $id_dokumen, PDO::PARAM_INT);
         $stmt->bindParam(':nim', $nim, PDO::PARAM_INT);
         $stmt->bindParam(':catatan', $catatan, PDO::PARAM_STR);
     
-        // Eksekusi query
         if ($stmt->execute()) {
-            // Mengembalikan jumlah baris yang diperbarui
             return $stmt->rowCount();
         }
-    
-        // Jika terjadi kesalahan
         return false;
     }
     
-    
-
     public function updateStatusVerifikasiDisetujui($id_dokumen, $nim, $status, $catatan) {
         $sql = "
             UPDATE Verifikasi
@@ -220,105 +203,93 @@ class VerifikatorModel extends Model {
                 $stmt->bindParam(':catatan', $catatan);
             }
     
-            // Debug query
-            error_log("Executing query: $sql with id_dokumen=$id_dokumen, nim=$nim, status=$status");
-    
             if ($stmt->execute()) {
-                error_log("Query berhasil dijalankan");
                 return $stmt->rowCount();
             } else {
-                error_log("Query gagal dijalankan");
                 return false;
             }
         } catch (PDOException $e) {
-            error_log("PDOException: " . $e->getMessage());
             return false;
         }
     }
     
-    
-
+    // --- QUERY DIREVISI: TANPA VIEW, LANGSUNG JOIN TABEL ASLI ---
     public function getMhsWithDocumentApprovedPusat($jenisDokumen) {
         $stmt = $this->conn->prepare("
             SELECT
-                vm.nim,
-                vm.nama,
-                vm.no_telp,
-                vm.role_prodi,
-                vm.role_jurusan,
-                vm.role_angkatan,
-                vm.kelas, 
-                vm.tgl_upload,
+                m.nim,
+                u.nama,
+                u.no_telp,
+                p.role_prodi,
+                j.role_jurusan,
+                a.role_angkatan,
+                m.kelas, 
+                MAX(v.tgl_upload) as tgl_upload,
                 COUNT(v.id_verifikasi) AS verifikasi_count
-            FROM Verif_Mhs_Pusat vm
-            JOIN Verifikasi v ON vm.nim = v.nim
+            FROM Mahasiswa m
+            JOIN `User` u ON m.id_user = u.id_user
+            JOIN Prodi p ON m.id_prodi = p.id_prodi
+            JOIN Jurusan j ON m.id_jurusan = j.id_jurusan
+            JOIN Angkatan a ON m.id_angkatan = a.id_angkatan
+            JOIN Verifikasi v ON m.nim = v.nim
             JOIN Dokumen d ON v.id_dokumen = d.id_dokumen
             WHERE d.jenis_dokumen = :jenisDokumen
               AND v.status_verifikasi = 'Disetujui'
             GROUP BY 
-                vm.nim,
-                vm.nama,
-                vm.no_telp,
-                vm.role_prodi,
-                vm.role_jurusan,
-                vm.role_angkatan,
-                vm.kelas, 
-                vm.tgl_upload
+                m.nim, 
+                u.nama, 
+                u.no_telp, 
+                p.role_prodi, 
+                j.role_jurusan, 
+                a.role_angkatan, 
+                m.kelas
             HAVING COUNT(v.id_verifikasi) = 6
             ORDER BY
-                vm.tgl_upload ASC;
+                tgl_upload ASC;
         ");
     
-        // Bind parameter jenis_dokumen
         $stmt->bindParam(':jenisDokumen', $jenisDokumen);
         $stmt->execute();
-    
-        // Fetch results
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        return $result;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-
+    // --- QUERY DIREVISI: TANPA VIEW, LANGSUNG JOIN TABEL ASLI ---
     public function getMhsWithDocumentApprovedJurusan($jenisDokumen) {
         $stmt = $this->conn->prepare("
             SELECT
-                vm.nim,
-                vm.nama,
-                vm.no_telp,
-                vm.role_prodi,
-                vm.role_jurusan,
-                vm.role_angkatan,
-                vm.kelas, 
-                vm.tgl_upload,
+                m.nim,
+                u.nama,
+                u.no_telp,
+                p.role_prodi,
+                j.role_jurusan,
+                a.role_angkatan,
+                m.kelas, 
+                MAX(v.tgl_upload) as tgl_upload,
                 COUNT(v.id_verifikasi) AS verifikasi_count
-            FROM Verif_Mhs_Jurusan vm
-            JOIN Verifikasi v ON vm.nim = v.nim
+            FROM Mahasiswa m
+            JOIN `User` u ON m.id_user = u.id_user
+            JOIN Prodi p ON m.id_prodi = p.id_prodi
+            JOIN Jurusan j ON m.id_jurusan = j.id_jurusan
+            JOIN Angkatan a ON m.id_angkatan = a.id_angkatan
+            JOIN Verifikasi v ON m.nim = v.nim
             JOIN Dokumen d ON v.id_dokumen = d.id_dokumen
             WHERE d.jenis_dokumen = :jenisDokumen
               AND v.status_verifikasi = 'Disetujui'
             GROUP BY 
-                vm.nim,
-                vm.nama,
-                vm.no_telp,
-                vm.role_prodi,
-                vm.role_jurusan,
-                vm.role_angkatan,
-                vm.kelas, 
-                vm.tgl_upload
+                m.nim, 
+                u.nama, 
+                u.no_telp, 
+                p.role_prodi, 
+                j.role_jurusan, 
+                a.role_angkatan, 
+                m.kelas
             HAVING COUNT(v.id_verifikasi) = 7
             ORDER BY
-                vm.tgl_upload ASC;
+                tgl_upload ASC;
         ");
     
-        // Bind parameter jenis_dokumen
         $stmt->bindParam(':jenisDokumen', $jenisDokumen);
         $stmt->execute();
-    
-        // Fetch results
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        return $result;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
-}    
+}

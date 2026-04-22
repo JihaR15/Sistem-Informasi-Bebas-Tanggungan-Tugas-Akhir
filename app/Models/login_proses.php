@@ -17,8 +17,8 @@ try {
     $input_username = $_POST['username'];
     $input_password = $_POST['password'];
 
-    // Query to check if the username exists
-    $sql = "SELECT * FROM [User] WHERE username = :username";
+    // Query to check if the username exists (KURUNG SIKU DIGANTI BACKTICK)
+    $sql = "SELECT * FROM `User` WHERE username = :username";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':username', $input_username, PDO::PARAM_STR);
     $stmt->execute();

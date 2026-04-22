@@ -21,14 +21,14 @@ class SuperAdminModel
 
     public function getVerifikatorCount()
     {
-        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM [User] WHERE role_user IN ('admin jurusan', 'admin pusat')");
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM `User` WHERE role_user IN ('admin jurusan', 'admin pusat')");
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
 
     public function getAdminCount()
     {
-        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM [User] WHERE role_user = 'superadmin'");
+        $stmt = $this->conn->prepare("SELECT COUNT(*) as total FROM `User` WHERE role_user = 'superadmin'");
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC)['total'];
     }
@@ -43,13 +43,13 @@ class SuperAdminModel
         v.status_verifikasi,
         d.nama_dokumen
     FROM 
-        [dbo].[Verifikasi] v
+        Verifikasi v
     JOIN 
-        [dbo].[Mahasiswa] m ON v.nim = m.nim
+        Mahasiswa m ON v.nim = m.nim
     JOIN 
-        [dbo].[User] u ON m.id_user = u.id_user
+        `User` u ON m.id_user = u.id_user
     JOIN 
-        [dbo].[Dokumen] d ON v.id_dokumen = d.id_dokumen;
+        Dokumen d ON v.id_dokumen = d.id_dokumen;
     ");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -74,7 +74,7 @@ class SuperAdminModel
                 m.kelas, 
                 u.no_telp 
             FROM Mahasiswa m
-            JOIN [User] u ON m.id_user = u.id_user
+            JOIN `User` u ON m.id_user = u.id_user
             JOIN Prodi p ON m.id_prodi = p.id_prodi
             JOIN Jurusan j ON m.id_jurusan = j.id_jurusan
             JOIN Angkatan a ON m.id_angkatan = a.id_angkatan
@@ -89,7 +89,7 @@ class SuperAdminModel
         try {
             // Tambah data ke tabel User
             $stmtUser = $this->conn->prepare("
-                INSERT INTO [User] (role_user, username, password, nama, no_telp, email)
+                INSERT INTO `User` (role_user, username, password, nama, no_telp, email)
                 VALUES ('mahasiswa', :username, :password, :nama, :no_telp, :email)
             ");
             $stmtUser->execute([
@@ -145,7 +145,7 @@ class SuperAdminModel
             $stmt->execute();
 
             // Update data user
-            $stmt = $this->conn->prepare("UPDATE [User] SET 
+            $stmt = $this->conn->prepare("UPDATE `User` SET 
                                             username = :username, 
                                             password = :password, 
                                             nama = :nama, 
@@ -191,7 +191,7 @@ class SuperAdminModel
     // Fungsi untuk menghapus user berdasarkan id_user
     public function deleteUser($id_user)
     {
-        $stmt = $this->conn->prepare("DELETE FROM [User] WHERE id_user = :id_user");
+        $stmt = $this->conn->prepare("DELETE FROM `User` WHERE id_user = :id_user");
         $stmt->bindParam(':id_user', $id_user);
         return $stmt->execute();
     }
@@ -223,7 +223,7 @@ class SuperAdminModel
     // Fungsi untuk mengambil data verifikator
     public function getVerifikatorData()
     {
-        $stmt = $this->conn->prepare("SELECT id_user, role_user, username, password, nama, no_telp, email FROM [User] WHERE role_user IN ('admin jurusan', 'admin pusat')");
+        $stmt = $this->conn->prepare("SELECT id_user, role_user, username, password, nama, no_telp, email FROM `User` WHERE role_user IN ('admin jurusan', 'admin pusat')");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -237,7 +237,7 @@ public function addVerifikator($role_user, $username, $password, $nama, $no_telp
 
         // Tambah data ke tabel User
         $stmtUser = $this->conn->prepare("
-            INSERT INTO [User] (role_user, username, password, nama, no_telp, email)
+            INSERT INTO `User` (role_user, username, password, nama, no_telp, email)
             VALUES (:role_user, :username, :password, :nama, :no_telp, :email)
         ");
         $stmtUser->execute([
@@ -270,7 +270,7 @@ public function updateVerifikator($id_user, $role_user, $username, $password, $n
         $this->conn->beginTransaction();
 
         // Update data user
-        $stmt = $this->conn->prepare("UPDATE [User] SET 
+        $stmt = $this->conn->prepare("UPDATE `User` SET 
                                         role_user = :role_user,
                                         username = :username, 
                                         password = :password, 
@@ -302,7 +302,7 @@ public function updateVerifikator($id_user, $role_user, $username, $password, $n
     // Ambil semua data Role User
     public function getAllRole_User()
     {
-        $stmt = $this->conn->prepare("SELECT DISTINCT role_user FROM [User] WHERE role_user IN ('admin jurusan', 'admin pusat')");
+        $stmt = $this->conn->prepare("SELECT DISTINCT role_user FROM `User` WHERE role_user IN ('admin jurusan', 'admin pusat')");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -310,7 +310,7 @@ public function updateVerifikator($id_user, $role_user, $username, $password, $n
     // Fungsi untuk mengambil data superadmin
     public function getAdminData()
     {
-        $stmt = $this->conn->prepare("SELECT DISTINCT id_user, role_user, username, password, nama, no_telp, email FROM [User] WHERE role_user = 'superadmin'");
+        $stmt = $this->conn->prepare("SELECT DISTINCT id_user, role_user, username, password, nama, no_telp, email FROM `User` WHERE role_user = 'superadmin'");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -324,7 +324,7 @@ public function updateVerifikator($id_user, $role_user, $username, $password, $n
 
         // Tambah data ke tabel User
         $stmtUser = $this->conn->prepare("
-            INSERT INTO [User] (role_user, username, password, nama, no_telp, email)
+            INSERT INTO `User` (role_user, username, password, nama, no_telp, email)
             VALUES ('superadmin', :username, :password, :nama, :no_telp, :email)
         ");
         $stmtUser->execute([
@@ -355,7 +355,7 @@ public function updateVerifikator($id_user, $role_user, $username, $password, $n
         $this->conn->beginTransaction();
 
         // Update data user
-        $stmt = $this->conn->prepare("UPDATE [User] SET 
+        $stmt = $this->conn->prepare("UPDATE `User` SET 
                                         role_user = :role_user,
                                         username = :username, 
                                         password = :password, 
@@ -387,7 +387,7 @@ public function updateVerifikator($id_user, $role_user, $username, $password, $n
 // Fungsi untuk menghapus berdasarkan id_verifikasi
 public function deleteVerifikasi($id_verifikasi)
 {
-    $stmt = $this->conn->prepare("DELETE FROM [Verifikasi] WHERE id_verifikasi = :id_verifikasi");
+    $stmt = $this->conn->prepare("DELETE FROM Verifikasi WHERE id_verifikasi = :id_verifikasi");
     $stmt->bindParam(':id_verifikasi', $id_verifikasi);
     return $stmt->execute();
 }

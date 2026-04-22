@@ -48,7 +48,7 @@ try {
                     SET 
                         path = :path,
                         status_verifikasi = 'Menunggu Diverifikasi',
-                        tgl_upload = GETDATE()
+                        tgl_upload = NOW()
                     WHERE nim = :nim 
                       AND id_dokumen = :id_dokumen
                       AND id_dokumen IN (
@@ -76,14 +76,13 @@ try {
 
             if (move_uploaded_file($_FILES['dokumen_file']['tmp_name'][$key], $filePath)) {
                 $insertQuery = "
-                    INSERT INTO Verifikasi (nim, id_dokumen, status_verifikasi, path, tgl_upload, id_user)
+                    INSERT INTO Verifikasi (nim, id_dokumen, status_verifikasi, path, tgl_upload)
                     VALUES (
                         :nim, 
                         :id_dokumen, 
                         'Menunggu Diverifikasi', 
                         :path, 
-                        GETDATE(), 
-                        5
+                        NOW()
                     )
                 ";
                 $stmtInsert = $conn->prepare($insertQuery);
