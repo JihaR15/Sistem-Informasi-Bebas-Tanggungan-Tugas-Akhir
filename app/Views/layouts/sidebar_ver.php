@@ -9,7 +9,7 @@
         <a class="menu-item" href="#riwayat" onclick="showTab('riwayat')">
             <i class="bi bi-clock-history"></i> Riwayat Verifikasi
         </a>
-        <a class="menu-item logout" href="../app/views/login.php">
+        <a class="menu-item logout" href="../app/Views/login.php">
             <i class="bi bi-power"></i> Keluar
         </a>
     </div>

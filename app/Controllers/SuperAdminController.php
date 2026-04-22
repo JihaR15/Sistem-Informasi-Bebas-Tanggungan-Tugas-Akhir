@@ -106,7 +106,7 @@ class SuperAdminController
             header("Location: index.php?controller=superAdmin&action=manageUser");
             exit;
         } else {
-            include __DIR__ . '/../../app/views/superadmin/manageUser.php';
+            include __DIR__ . '/../../app/Views/superadmin/manageUser.php';
         }
     }
 
@@ -195,7 +195,7 @@ class SuperAdminController
             header("Location: index.php?controller=superAdmin&action=manageUser");
             exit;
         } else {
-            include __DIR__ . '/../../app/views/superadmin/manageUser.php';
+            include __DIR__ . '/../../app/Views/superadmin/manageUser.php';
         }
     }
 
@@ -280,7 +280,7 @@ class SuperAdminController
             header("Location: index.php?controller=superAdmin&action=manageUser");
             exit;
         } else {
-            include __DIR__ . '/../../app/views/superadmin/manageUser.php';
+            include __DIR__ . '/../../app/Views/superadmin/manageUser.php';
         }
     }
 

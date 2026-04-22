@@ -145,7 +145,7 @@ foreach ($statusJurusan as $row) {
         var formData = new FormData($('#uploadForm-' + id_dokumen)[0]);
 
         $.ajax({
-            url: '../app/views/mahasiswa/upload_ulang.php',  
+            url: '../app/Views/mahasiswa/upload_ulang.php',  
             type: 'POST',
             data: formData,
             processData: false,  // Jangan memproses data form menjadi query string

@@ -27,7 +27,7 @@ foreach ($dataIjazah as $file) {
                                     <a href="javascript:void(0);" class="btn btn-info me-2" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#filePreviewModal" 
-                                        onclick="showPreview('../app/views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[8]) ?>')">
+                                        onclick="showPreview('../app/Views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[8]) ?>')">
                                     <i class="bi bi-eye"></i></a>
 
                                     <input type="file" name="dokumen_file[]" id="file8" class="form-control">
@@ -48,7 +48,7 @@ foreach ($dataIjazah as $file) {
                                     <a href="javascript:void(0);" class="btn btn-info me-2" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#filePreviewModal" 
-                                        onclick="showPreview('../app/views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[9]) ?>')">
+                                        onclick="showPreview('../app/Views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[9]) ?>')">
                                     <i class="bi bi-eye"></i></a>
 
                                     <input type="file" name="dokumen_file[]" id="file9" class="form-control">
@@ -71,7 +71,7 @@ foreach ($dataIjazah as $file) {
                                     <a href="javascript:void(0);" class="btn btn-info me-2" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#filePreviewModal" 
-                                        onclick="showPreview('../app/views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[10]) ?>')">
+                                        onclick="showPreview('../app/Views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[10]) ?>')">
                                     <i class="bi bi-eye"></i></a>
 
                                     <input type="file" name="dokumen_file[]" id="file10" class="form-control">
@@ -93,7 +93,7 @@ foreach ($dataIjazah as $file) {
                                     <a href="javascript:void(0);" class="btn btn-info me-2" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#filePreviewModal" 
-                                        onclick="showPreview('../app/views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[11]) ?>')">
+                                        onclick="showPreview('../app/Views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[11]) ?>')">
                                     <i class="bi bi-eye"></i></a>
 
                                     <input type="file" name="dokumen_file[]" id="file11" class="form-control">
@@ -118,7 +118,7 @@ foreach ($dataIjazah as $file) {
                                     <a href="javascript:void(0);" class="btn btn-info me-2" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#filePreviewModal" 
-                                        onclick="showPreview('../app/views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[12]) ?>')">
+                                        onclick="showPreview('../app/Views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[12]) ?>')">
                                     <i class="bi bi-eye"></i></a>
 
                                     <input type="file" name="dokumen_file[]" id="file12" class="form-control">
@@ -141,7 +141,7 @@ foreach ($dataIjazah as $file) {
                                     <a href="javascript:void(0);" class="btn btn-info me-2" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#filePreviewModal" 
-                                        onclick="showPreview('../app/views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[13]) ?>')">
+                                        onclick="showPreview('../app/Views/mahasiswa/serve_file.php?file=<?= urlencode($filePaths[13]) ?>')">
                                     <i class="bi bi-eye"></i></a>
 
                                     <input type="file" name="dokumen_file[]" id="file13" class="form-control">
@@ -172,7 +172,7 @@ $(document).ready(function() {
         var formData = new FormData(this); 
 
         $.ajax({
-            url: '../app/views/Mahasiswa/upload_ijazah.php', 
+            url: '../app/Views/Mahasiswa/upload_ijazah.php', 
             type: 'POST',
             data: formData,
             contentType: false, 
