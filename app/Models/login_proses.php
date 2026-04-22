@@ -8,7 +8,7 @@ $conn = $db->connect();
 
 if (!$conn) {
     $_SESSION['error'] = "Database connection failed.";
-    header("Location: ../views/login.php");
+    header("Location: ../Views/login.php");
     exit();
 }
 
@@ -44,7 +44,7 @@ try {
                     $_SESSION['nim'] = $mahasiswa['nim']; // Store NIM in session
                 } else {
                     $_SESSION['error'] = "No associated NIM found!";
-                    header("Location: ../views/login.php");
+                    header("Location: ../Views/login.php");
                     exit();
                 }
             }
@@ -65,22 +65,22 @@ try {
                     exit();
                 default:
                     $_SESSION['error'] = "Invalid role assigned to user!";
-                    header("Location: ../views/login.php");
+                    header("Location: ../Views/login.php");
                     exit();
             }
         } else {
             $_SESSION['error'] = "Invalid username or password!";
-            header("Location: ../views/login.php");
+            header("Location: ../Views/login.php");
             exit();
         }
     } else {
         $_SESSION['error'] = "User not found!";
-        header("Location: ../views/login.php");
+        header("Location: ../Views/login.php");
         exit();
     }
 } catch (PDOException $e) {
     $_SESSION['error'] = "Exception occurred: " . htmlspecialchars($e->getMessage());
-    header("Location: ../views/login.php");
+    header("Location: ../Views/login.php");
     exit();
 }
 ?>
