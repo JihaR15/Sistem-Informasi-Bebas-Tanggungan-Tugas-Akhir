@@ -306,7 +306,7 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
             <i class="fas fa-folder"></i>
             Manajemen Dokumen
         </a>
-        <a class="menu-item logout" href="http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Views/logout.php">
+        <a class="menu-item logout" href="/app/Views/logout.php">
             <i class="bi bi-power"></i>
             Keluar
         </a>
@@ -317,9 +317,9 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
     </div>
     <div class="tabs-container">
     <div class="tabs">
-    <button class="tab" onclick="window.location.href='http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Controllers/SuperAdminController.php?action=manageUsers'">Mahasiswa</button>
-    <button class="tab" onclick="window.location.href='http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Controllers/SuperAdminController.php?action=manageVerifikator'">Verifikator</button>
-    <button class="tab active" onclick="window.location.href='http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Controllers/SuperAdminController.php?action=manageAdmin'">Admin</button>
+    <button class="tab" onclick="window.location.href='/app/Controllers/SuperAdminController.php?action=manageUsers'">Mahasiswa</button>
+    <button class="tab" onclick="window.location.href='/app/Controllers/SuperAdminController.php?action=manageVerifikator'">Verifikator</button>
+    <button class="tab active" onclick="window.location.href='/app/Controllers/SuperAdminController.php?action=manageAdmin'">Admin</button>
     </div>
     </div>
     <div class="table-container">

@@ -325,7 +325,7 @@ $role_user = $_SESSION['role_user'] ?? 'Tidak diketahui';
     <i class="fas fa-folder"></i>
     Manajemen Dokumen
    </a>
-   <a class="menu-item logout" href="http://localhost/Sistem-Informasi-Bebas-Tanggungan-Tugas-Akhir/app/Views/logout.php">
+   <a class="menu-item logout" href="/app/Views/logout.php">
     <i class="bi bi-power"></i>
     Keluar
    </a>
