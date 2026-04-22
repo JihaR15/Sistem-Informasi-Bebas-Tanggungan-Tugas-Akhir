@@ -36,12 +36,12 @@ class MahasiswaController{
         }
     }
 
-    // public function getDashboardData($nim) {
-    //     $jumlahDokumen = $this->model->getCountDokumenByNIMJurusan($nim);
-    //     return [
-    //         'jumlahDokumen' => $jumlahDokumen,
-    //     ];
-    // }
+    public function getDashboardData($nim) {
+        $jumlahDokumen = $this->model->getCountDokumenByNIMJurusan($nim);
+        return [
+            'jumlahDokumen' => $jumlahDokumen,
+        ];
+    }
 }
 
 // // Routing
